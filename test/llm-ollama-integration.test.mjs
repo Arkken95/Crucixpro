@@ -9,14 +9,23 @@ import { OllamaProvider } from '../lib/llm/ollama.mjs';
 const BASE_URL = process.env.OLLAMA_BASE_URL || 'http://localhost:11434';
 const MODEL = process.env.OLLAMA_MODEL || 'llama3.1:8b';
 
-// Check if Ollama is reachable before running tests
+// Check if Ollama is reachable and the requested model is installed
 let ollamaAvailable = false;
+let skipReason = 'Ollama not reachable';
 try {
   const res = await fetch(`${BASE_URL}/api/tags`, { signal: AbortSignal.timeout(3000) });
-  ollamaAvailable = res.ok;
+  if (res.ok) {
+    const { models = [] } = await res.json();
+    const installed = models.some((m) => m.name === MODEL || m.name.startsWith(`${MODEL}:`));
+    if (installed) {
+      ollamaAvailable = true;
+    } else {
+      skipReason = `Model "${MODEL}" not installed (available: ${models.map((m) => m.name).join(', ') || 'none'})`;
+    }
+  }
 } catch { /* not available */ }
 
-describe('Ollama integration', { skip: !ollamaAvailable && 'Ollama not reachable' }, () => {
+describe('Ollama integration', { skip: !ollamaAvailable && skipReason }, () => {
   it('should complete a prompt via local Ollama', async () => {
     const provider = new OllamaProvider({ model: MODEL, baseUrl: BASE_URL });
     assert.equal(provider.isConfigured, true);
