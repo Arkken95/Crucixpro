@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// TheWatcher Dashboard Data Synthesizer
+// Crucix Dashboard Data Synthesizer
 // Reads runs/latest.json, fetches RSS news, generates signal-based ideas,
 // and injects everything into dashboard/public/jarvis.html
 //
@@ -9,7 +9,7 @@ import { existsSync, readFileSync, readdirSync, writeFileSync } from 'fs';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 import { exec } from 'child_process';
-import config from '../thewatcher.config.mjs';
+import config from '../crucix.config.mjs';
 import { createLLMProvider } from '../lib/llm/index.mjs';
 import { generateLLMIdeas } from '../lib/llm/ideas.mjs';
 

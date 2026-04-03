@@ -1,4 +1,4 @@
-// TheWatcher Configuration — all settings with env var overrides
+// Crucix Configuration — all settings with env var overrides
 
 import "./apis/utils/env.mjs"; // Load .env first
 
